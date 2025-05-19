@@ -20,13 +20,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { motion } from "framer-motion";
 import axios from "axios";
-import { Building2, Clock, Loader, MapPin, Search } from "lucide-react";
+import dayjs from "dayjs";
+import { Clock, MapPin, Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const apiBrasil = process.env.NEXT_PUBLIC_BRASIL_API;
-const apiBrasilClima = process.env.NEXT_PUBLIC_BRASIL_API_CLIMA;
+// const apiBrasilClima = process.env.NEXT_PUBLIC_BRASIL_API_CLIMA;
 
 interface TypeApiBrasil {
   cep: string;
@@ -38,7 +40,7 @@ interface TypeApiBrasil {
 
 const FinderPage = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [giveAddress, setAddress] = useState<TypeApiBrasil | undefined>();
+  const [giveAddress, setAddress] = useState<TypeApiBrasil>();
   const [loadedDatas, setLoadedDatas] = useState<boolean | null>();
 
   const form = useForm({
@@ -55,20 +57,21 @@ const FinderPage = () => {
       const statusReq = searchCep.status === 200;
       setLoadedDatas(statusReq);
       console.log(searchCep.data.state);
-      if (searchCep) {
-      }
       form.reset();
-      return setAddress(searchCep.data);
+
+      if (statusReq) {
+        setAddress(searchCep.data);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const timer = setTimeout(() => {
-    setIsLoading(false);
-  }, 1500);
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
     //cleanup function
     return () => clearTimeout(timer);
   }, []);
@@ -101,12 +104,9 @@ const FinderPage = () => {
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription>
-                      <div
-                        className={
-                          form.watch("cepValue").length > 0 ? "p-2" : null
-                        }
-                      />
+                    <FormDescription
+                      className={form.watch("cepValue").length > 0 ? "p-2" : ""}
+                    >
                       {/* <Skeleton className="bg-stone-900 h-8 w-full" /> */}
                     </FormDescription>
                     <FormMessage title="Insira os dados corretamente" />
@@ -126,65 +126,73 @@ const FinderPage = () => {
             ) : null}
           </Form>
         </CardContent>
-        <CardFooter className="flex justify-end text-gray-500">
-          {loadedDatas ? null : <small>{new Date().getFullYear()}</small>}
+        <CardFooter className="flex justify-end text-stone-500">
+          {loadedDatas ? null : (
+            <small>Sopmac&copy; {new Date().getFullYear()}</small>
+          )}
         </CardFooter>
       </Card>
       <Card className="h-auto min-w-[400px] max-w-[600px] w-full text-gray-200 bg-transparent shadow-none border-none">
         <CardHeader>
           {loadedDatas ? (
-            <>
+            <section>
               Resultado da busca
               <CardDescription className="flex items-center gap-1">
-                <p>{`${new Date().getHours()}:${new Date().getMinutes()}h	`}</p>
-                <div>
-                  <Clock size="15" />
-                </div>
+                <Suspense fallback={<p>Loading tararan...</p>}>
+                  <p>{`${dayjs(new Date()).format("HH:mm - DD/MM/YYYY")}`}</p>
+                  <span>
+                    <Clock size="15" />
+                  </span>
+                </Suspense>
               </CardDescription>
-            </>
+            </section>
           ) : (
             <>{null}</>
           )}
         </CardHeader>
         <CardContent>
-          {loadedDatas ? (
-            <section className="flex flex-col gap-4 bg-stone-900 min-h-[160px] rounded-xl text-xl">
-              <p>
-                {isLoading ? (
-                  <Skeleton className="h-[16px] w-full" />
-                ) : (
-                  <b>{giveAddress?.neighborhood}</b>
-                )}
-              </p>
-              <p className="text-4xl">
-                {isLoading ? (
-                  <Skeleton className="h-[16px] w-full" />
-                ) : (
-                  <b>{giveAddress?.street}</b>
-                )}
-              </p>
-              <span className="flex gap-3" key={giveAddress?.cep}>
-                <p>
-                  {isLoading ? (
-                    <Skeleton className="h-[16px] w-full" />
-                  ) : (
-                    <b>
-                      {giveAddress?.city}, {giveAddress?.state}
-                    </b>
-                  )}
-                </p>
-              </span>
-              <span>
-                <p>
-                  <small className="text-stone-500">
-                    Cep: {giveAddress.cep}
-                  </small>
-                </p>
-              </span>
-            </section>
-          ) : (
-            <section className="h-auto min-h-[160px]">{""}</section>
-          )}
+          <motion.div animate={{ rotate: 360 }}>
+            {loadedDatas ? (
+              <section className="flex flex-col gap-4 bg-stone-900 min-h-[160px] rounded-xl text-xl">
+                <Suspense fallback={<p>Loading tararan...</p>}>
+                  <p>
+                    {isLoading ? (
+                      <Skeleton className="h-[16px] w-full" />
+                    ) : (
+                      <b>{giveAddress?.neighborhood}</b>
+                    )}
+                  </p>
+                  <p className="text-4xl">
+                    {isLoading ? (
+                      <Skeleton className="h-[16px] w-full" />
+                    ) : (
+                      <b>{giveAddress?.street}</b>
+                    )}
+                  </p>
+                  <span className="flex gap-3" key={giveAddress?.cep}>
+                    <p>
+                      {isLoading ? (
+                        <Skeleton className="h-[16px] w-full" />
+                      ) : (
+                        <b>
+                          {giveAddress?.city}, {giveAddress?.state}
+                        </b>
+                      )}
+                    </p>
+                  </span>
+                  <span>
+                    <p>
+                      <small className="text-stone-500">
+                        Cep: {giveAddress?.cep}
+                      </small>
+                    </p>
+                  </span>
+                </Suspense>
+              </section>
+            ) : (
+              <section className="h-auto min-h-[160px]">{""}</section>
+            )}
+          </motion.div>
         </CardContent>
         <CardFooter>{""}</CardFooter>
       </Card>
