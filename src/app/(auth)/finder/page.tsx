@@ -1,6 +1,5 @@
 "use client";
 
-import "dotenv/config";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,7 +23,7 @@ import { useEffect, useState, Suspense } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import dayjs from "dayjs";
-import { Clock, MapPin, Search } from "lucide-react";
+import { Clock, Loader2, MapPin, Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const apiBrasil = process.env.NEXT_PUBLIC_BRASIL_API;
@@ -114,22 +113,32 @@ const FinderPage = () => {
                 )}
               />
               <Button
-                className="cursor-pointer h-full w-auto"
+                className={`cursor-pointer h-full w-auto ${form.watch("cepValue").length === 8 ? "border-2 border-[#00ff00]" : "none"}`}
                 type="submit"
                 disabled={form.watch("cepValue").length < 8}
               >
-                <Search size={30} />
+                {form.watch("cepValue").length > 0 &&
+                form.watch("cepValue").length <= 7 ? (
+                  <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                ) : (
+                  <Search
+                    color={
+                      form.watch("cepValue").length === 8 ? "#00ff00" : "#fff"
+                    }
+                    size={30}
+                  />
+                )}
               </Button>
             </form>
             {form.watch("cepValue").length > 0 ? (
-              <small className="p-2">searching...</small>
-            ) : null}
+              <small className="p-2 text-stone-500">searching...</small>
+            ) : (
+              <small className="p-2 text-stone-500">{""}</small>
+            )}
           </Form>
         </CardContent>
         <CardFooter className="flex justify-end text-stone-500">
-          {loadedDatas ? null : (
-            <small>Sopmac&copy; {new Date().getFullYear()}</small>
-          )}
+          <small>Sopmac&copy; {new Date().getFullYear()}</small>
         </CardFooter>
       </Card>
       <Card className="h-auto min-w-[400px] max-w-[600px] w-full text-gray-200 bg-transparent shadow-none border-none">
@@ -150,49 +159,62 @@ const FinderPage = () => {
             <>{null}</>
           )}
         </CardHeader>
-        <CardContent>
-          <motion.div animate={{ rotate: 360 }}>
-            {loadedDatas ? (
-              <section className="flex flex-col gap-4 bg-stone-900 min-h-[160px] rounded-xl text-xl">
-                <Suspense fallback={<p>Loading tararan...</p>}>
-                  <p>
-                    {isLoading ? (
-                      <Skeleton className="h-[16px] w-full" />
-                    ) : (
-                      <b>{giveAddress?.neighborhood}</b>
-                    )}
-                  </p>
-                  <p className="text-4xl">
-                    {isLoading ? (
-                      <Skeleton className="h-[16px] w-full" />
-                    ) : (
-                      <b>{giveAddress?.street}</b>
-                    )}
-                  </p>
-                  <span className="flex gap-3" key={giveAddress?.cep}>
-                    <p>
-                      {isLoading ? (
-                        <Skeleton className="h-[16px] w-full" />
-                      ) : (
-                        <b>
-                          {giveAddress?.city}, {giveAddress?.state}
-                        </b>
-                      )}
-                    </p>
-                  </span>
-                  <span>
+        <CardContent className="w-full">
+          {loadedDatas || form.watch("cepValue").length > 0 ? (
+            <section className="flex flex-col gap-4 bg-stone-900 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
+              <motion.div animate={{ y: 20 }}>
+                <p>
+                  {isLoading ? (
+                    <Skeleton className="h-[20px] w-full" />
+                  ) : (
+                    <b>{giveAddress?.neighborhood}</b>
+                  )}
+                </p>
+                <p className="text-4xl">
+                  {isLoading ? (
+                    <Skeleton className="h-[40px] bg-stone-600 w-full" />
+                  ) : (
+                    <b>{giveAddress?.street}</b>
+                  )}
+                </p>
+                <div>
+                  {isLoading ? (
+                    <Skeleton className="h-[40px] bg-stone-600 w-full" />
+                  ) : (
+                    <p>{`${giveAddress?.city}, ${giveAddress?.state}`}</p>
+                  )}
+                </div>
+                <span>
+                  {isLoading ? (
+                    <Skeleton className="h-[16px] w-full" />
+                  ) : (
                     <p>
                       <small className="text-stone-500">
                         Cep: {giveAddress?.cep}
                       </small>
                     </p>
-                  </span>
-                </Suspense>
-              </section>
-            ) : (
-              <section className="h-auto min-h-[160px]">{""}</section>
-            )}
-          </motion.div>
+                  )}
+                </span>
+                {/* meu loader de carregamento */}
+                {/* <span
+                  className="flex items-center justify-center"
+                  key={giveAddress?.cep}
+                >
+                  <div>
+                    {isLoading ? (
+                      <Skeleton className="h-[16px] w-full" />
+                    ) : (
+                      <div className="flex items-center justify-center w-100 border">
+                        <Loader2 className="h-20 w-20 animate-spin text-stone-600" />
+                      </div>
+                    )}
+                  </div>
+                </span> */}
+              </motion.div>
+            </section>
+          ) : (
+            <section className="h-auto min-h-[160px]">{""}</section>
+          )}
         </CardContent>
         <CardFooter>{""}</CardFooter>
       </Card>
