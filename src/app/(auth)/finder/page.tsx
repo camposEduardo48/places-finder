@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+console.log("BUTTON: ", typeof Button);
+
 import {
   Card,
   CardContent,
@@ -8,23 +10,43 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
+console.log("CARD: ", typeof Card);
+console.log("CARD C: ", typeof CardContent);
+console.log("CARD D: ", typeof CardDescription);
+console.log("CARD F: ", typeof CardFooter);
+console.log("CARD H: ", typeof CardHeader);
+
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+console.log("FORM: ", typeof Form);
+console.log("FORM C: ", typeof FormControl);
+console.log("FORM F: ", typeof FormField);
+console.log("FORM I: ", typeof FormItem);
+console.log("FORM M: ", typeof FormMessage);
+
 import { Input } from "@/components/ui/input";
+console.log("INPUT: ", typeof Input);
 import { Skeleton } from "@/components/ui/skeleton";
+console.log("SKELETON: ", typeof Skeleton);
+
 import { useForm } from "react-hook-form";
-import { useEffect, useState, Suspense } from "react";
+console.log("useForm: ", typeof useForm);
+
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+console.log("MOTION: ", typeof motion);
+
 import axios from "axios";
 import dayjs from "dayjs";
+console.log("Dayjs: ", typeof dayjs);
 import { Clock, Loader2, MapPin, Search } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+console.log("SEPARATOR: ", typeof Separator);
 
 const apiBrasil = process.env.NEXT_PUBLIC_BRASIL_API;
 // const apiBrasilClima = process.env.NEXT_PUBLIC_BRASIL_API_CLIMA;
@@ -87,7 +109,7 @@ const FinderPage = () => {
           <Form {...form}>
             <small>Digite o cep</small>
             <form
-              className="flex justify-between w-full items-center"
+              className="flex gap-3 justify-start h-auto w-full items-center"
               onSubmit={form.handleSubmit(getCep)}
             >
               <FormField
@@ -97,23 +119,18 @@ const FinderPage = () => {
                   <FormItem className="flex mt-2 items-center">
                     <FormControl>
                       <Input
-                        className="h-[50px] w-100 mt-0 border-none bg-stone-900"
+                        className="h-[50px] w-full mt-0 border-none bg-stone-900"
                         type="number"
                         placeholder="Cep ex: 08033219..."
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription
-                      className={form.watch("cepValue").length > 0 ? "p-2" : ""}
-                    >
-                      {/* <Skeleton className="bg-stone-900 h-8 w-full" /> */}
-                    </FormDescription>
                     <FormMessage title="Insira os dados corretamente" />
                   </FormItem>
                 )}
               />
               <Button
-                className={`cursor-pointer h-full w-auto ${form.watch("cepValue").length === 8 ? "border-2 border-[#00ff00]" : "none"}`}
+                className={`cursor-pointer mt-2 h-[150px]l w-auto ${form.watch("cepValue").length === 8 ? "border-2 border-[#00ff00]" : "none"}`}
                 type="submit"
                 disabled={form.watch("cepValue").length < 8}
               >
@@ -147,12 +164,10 @@ const FinderPage = () => {
             <section>
               Resultado da busca
               <CardDescription className="flex items-center gap-1">
-                <Suspense fallback={<p>Loading tararan...</p>}>
-                  <p>{`${dayjs(new Date()).format("HH:mm - DD/MM/YYYY")}`}</p>
-                  <span>
-                    <Clock size="15" />
-                  </span>
-                </Suspense>
+                <p>{`${dayjs(new Date()).format("HH:mm - DD/MM/YYYY")}`}</p>
+                <span>
+                  <Clock size="15" />
+                </span>
               </CardDescription>
             </section>
           ) : (
@@ -161,7 +176,7 @@ const FinderPage = () => {
         </CardHeader>
         <CardContent className="w-full">
           {loadedDatas || form.watch("cepValue").length > 0 ? (
-            <section className="flex flex-col gap-4 bg-stone-900 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
+            <section className="flex flex-col bg-stone-900 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
               <motion.div animate={{ y: 20 }}>
                 <p>
                   {isLoading ? (
@@ -213,7 +228,9 @@ const FinderPage = () => {
               </motion.div>
             </section>
           ) : (
-            <section className="h-auto min-h-[160px]">{""}</section>
+            <section className="h-auto min-h-[160px]">
+              <span>{""}</span>
+            </section>
           )}
         </CardContent>
         <CardFooter>{""}</CardFooter>
