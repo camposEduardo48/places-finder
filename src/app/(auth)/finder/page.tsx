@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-
 import {
   Card,
   CardContent,
@@ -18,14 +17,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import dayjs from "dayjs";
-import { Clock, Loader2, MapPin, Search } from "lucide-react";
-import { Signpost, LocationCity, MarkunreadMailbox } from "@mui/icons-material";
+import {
+  BookMarked,
+  Clock,
+  Loader2,
+  LocateIcon,
+  Signpost,
+  MapPin,
+  Search,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { useTheme } from "next-themes";
+// import { useTheme } from "next-themes";
 
 const apiBrasil = process.env.NEXT_PUBLIC_BRASIL_API;
 // const apiBrasilClima = process.env.NEXT_PUBLIC_BRASIL_API_CLIMA;
@@ -40,7 +46,7 @@ interface TypeApiBrasil {
 }
 
 const FinderPage = () => {
-  const { setTheme } = useTheme();
+  // const { setTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [giveAddress, setAddress] = useState<TypeApiBrasil>();
   const [loadedDatas, setLoadedDatas] = useState<boolean | null>();
@@ -70,19 +76,12 @@ const FinderPage = () => {
     }
   };
 
-  useEffect(() => {
-    // const timer = setTimeout(() => {
-    //   setIsLoading(false);
-    // }, 1500);
-    //cleanup function
-    // return () => clearTimeout(timer);
-  }, []);
+  // useEffect(() => {
+  //   // setTheme("dark");
+  // }, [setTheme]);
 
   return (
-    <main
-      onLoad={() => setTheme("dark")}
-      className="box-content flex flex-col gap-6 lg:w-[600px] h-[100vh] max-sm:justify-center justify-center max-sm:items-center items-center max-sm:w-full lg:max-w-[70%]"
-    >
+    <main className="box-content flex flex-col gap-6 lg:w-[600px] h-[100vh] max-sm:justify-center justify-center max-sm:items-center items-center max-sm:w-full lg:max-w-[70%]">
       <Card className="h-auto min-w-[350px] max-w-[600px] w-[96%] text-gray-200 bg-stone-800 shadow-none">
         <CardHeader className="flex items-center gap-3">
           <MapPin size={30} color="gray" />
@@ -152,7 +151,8 @@ const FinderPage = () => {
             {loadedDatas && (
               <>
                 <p className="text-lg">Resultado da pesquisa</p>
-                <p className="text-stone-500">
+                <p className="flex gap-2 items-center text-stone-500">
+                  <Clock size={16} />
                   <small>{actualDate}</small>
                 </p>
               </>
@@ -163,19 +163,20 @@ const FinderPage = () => {
             {loadedDatas || form.watch("cepValue").length > 0 ? (
               <section className="flex flex-col items-center justify-start p-4 gap-4 bg-stone-800 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
                 <motion.div initial={{ scale: -0.5 }} animate={{ scale: 1 }}>
-                  {!loadedDatas && (
-                    <Loader2
-                      className="w-[100px] animate-spin text-muted-foreground"
-                      size={100}
-                    />
-                  )}
+                  {form.watch("cepValue").length <= 7 ||
+                    (!loadedDatas && (
+                      <Loader2
+                        className="w-[100px] animate-spin text-muted-foreground"
+                        size={100}
+                      />
+                    ))}
                   <ul>
                     <li className="pb-4">
-                      {loadedDatas ? (
+                      {!loadedDatas ? (
                         <Skeleton className="h-[20px] w-full" />
                       ) : (
                         <span className="flex items-center gap-2">
-                          <LocationCity />
+                          <LocateIcon />
                           <p>
                             <small>Bairro</small>
                           </p>
@@ -191,7 +192,7 @@ const FinderPage = () => {
                         </p>
                       </span>
                       <p className="text-3xl">
-                        {loadedDatas ? (
+                        {!loadedDatas ? (
                           <Skeleton className="h-[40px] bg-stone-600 w-full" />
                         ) : (
                           <b>{giveAddress?.street}</b>
@@ -200,13 +201,15 @@ const FinderPage = () => {
                     </li>
                     <li className="pb-3">
                       <span className="flex items-center gap-2">
-                        <MarkunreadMailbox />
+                        <BookMarked />
                         <p>
                           <small>Cep</small>
                         </p>
                       </span>
                       <p>
-                        {loadedDatas && (
+                        {!loadedDatas ? (
+                          <Skeleton className="h-[40px] bg-stone-600 w-full" />
+                        ) : (
                           <small className="text-stone-500">
                             {giveAddress?.cep}
                           </small>
