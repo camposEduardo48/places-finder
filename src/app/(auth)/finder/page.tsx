@@ -25,7 +25,7 @@ import {
   BookMarked,
   Clock,
   Loader2,
-  LocateIcon,
+  Locate,
   Signpost,
   MapPin,
   Search,
@@ -49,7 +49,7 @@ const FinderPage = () => {
   // const { setTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [giveAddress, setAddress] = useState<TypeApiBrasil>();
-  const [loadedDatas, setLoadedDatas] = useState<boolean | null>();
+  const [loadedDatas, setLoadedDatas] = useState<boolean>();
 
   const form = useForm({
     defaultValues: {
@@ -176,7 +176,7 @@ const FinderPage = () => {
                         <Skeleton className="h-[20px] w-full" />
                       ) : (
                         <span className="flex items-center gap-2">
-                          <LocateIcon />
+                          <Locate />
                           <p>
                             <small>Bairro</small>
                           </p>
