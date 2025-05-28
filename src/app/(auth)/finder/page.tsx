@@ -1,17 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormMessage,
@@ -19,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useForm } from "react-hook-form";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -53,7 +52,7 @@ const FinderPage = () => {
   });
 
   const getCep = async () => {
-    setIsLoading(false);
+    setIsLoading(true);
     try {
       const searchCep = await axios.get(
         `${apiBrasil}/${form.getValues("cepValue")}`,
@@ -94,33 +93,31 @@ const FinderPage = () => {
           <Form {...form}>
             <small>Digite o cep</small>
             <form
-              className="flex max-sm:flex-col border-2 border-pink-500 justify-between w-full"
+              // className="flex max-sm:flex-col border-2 border-pink-500 justify-between w-full"
+              className="flex gap-3 justify-start h-auto w-full items-center"
               onSubmit={form.handleSubmit(getCep)}
             >
               <FormField
                 control={form.control}
                 name="cepValue"
                 render={({ field }) => (
-                  <FormItem className="flex border-2 border-b-blue-400 mt-2 items-center">
+                  <FormItem
+                    className={`flex w-full rounded-lg ${form.watch("cepValue").length === 8 ? "border-2 border-b-[#00ff00]" : "none"} mt-2 items-center`}
+                  >
                     <FormControl>
                       <Input
-                        className="h-[50px] w-full mt-0 border-none bg-stone-900"
+                        className="h-[50px] w-[100%] mt-0 border-none bg-stone-900"
                         type="number"
                         placeholder="Cep ex: 08033219..."
                         {...field}
                       />
                     </FormControl>
-                    <FormDescription
-                      className={form.watch("cepValue").length > 0 ? "p-2" : ""}
-                    >
-                      {/* <Skeleton className="bg-stone-900 h-8 w-full" /> */}
-                    </FormDescription>
                     <FormMessage title="Insira os dados corretamente" />
                   </FormItem>
                 )}
               />
               <Button
-                className={`cursor-pointer dark:bg-stone-900 p-3 h-full w-auto ${form.watch("cepValue").length === 8 ? "border-2 border-[#00ff00]" : "none"}`}
+                className={`cursor-pointer dark:bg-stone-900 p-3 h-full border-2 w-auto ${form.watch("cepValue").length === 8 ? "border-2 border-[#00ff00]" : "none"}`}
                 type="submit"
                 disabled={form.watch("cepValue").length < 8}
               >
@@ -138,7 +135,7 @@ const FinderPage = () => {
                 )}
               </Button>
             </form>
-            {form.watch("cepValue").length > 0 ? (
+            {form.watch("cepValue").length > 0 && !loadedDatas ? (
               <small className="p-2 text-stone-500">searching...</small>
             ) : (
               <small className="p-2 text-stone-500">{""}</small>
@@ -149,7 +146,7 @@ const FinderPage = () => {
           <small>Sopmac&copy; {new Date().getFullYear()}</small>
         </CardFooter>
       </Card>
-      {form.watch("cepValue").padStart(1) && (
+      {isLoading && (
         <Card className="h-auto min-w-[350px] max-w-[600px] w-[96%] text-gray-200 bg-stone-800 shadow-none">
           <CardHeader className="w-full text-white">
             {loadedDatas && (
@@ -161,11 +158,11 @@ const FinderPage = () => {
               </>
             )}
           </CardHeader>
-          {isLoading ? <Separator /> : null}
+          {loadedDatas ? <Separator /> : null}
           <CardContent className="w-full p-0">
             {loadedDatas || form.watch("cepValue").length > 0 ? (
-              <section className="flex flex-col items-start justify-start p-4 gap-4 bg-stone-800 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+              <section className="flex flex-col items-center justify-start p-4 gap-4 bg-stone-800 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
+                <motion.div initial={{ scale: -0.5 }} animate={{ scale: 1 }}>
                   {!loadedDatas && (
                     <Loader2
                       className="w-[100px] animate-spin text-muted-foreground"
@@ -174,7 +171,7 @@ const FinderPage = () => {
                   )}
                   <ul>
                     <li className="pb-4">
-                      {isLoading ? (
+                      {loadedDatas ? (
                         <Skeleton className="h-[20px] w-full" />
                       ) : (
                         <span className="flex items-center gap-2">
@@ -194,7 +191,7 @@ const FinderPage = () => {
                         </p>
                       </span>
                       <p className="text-3xl">
-                        {isLoading ? (
+                        {loadedDatas ? (
                           <Skeleton className="h-[40px] bg-stone-600 w-full" />
                         ) : (
                           <b>{giveAddress?.street}</b>
