@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -60,25 +60,39 @@ const FinderPage = () => {
   const getCep = async () => {
     setIsLoading(true);
     try {
-      const searchCep = await axios.get(
-        `${apiBrasil}/${form.getValues("cepValue")}`,
-      );
-      const statusReq = searchCep.status === 200;
-      setLoadedDatas(statusReq);
-      console.log(searchCep.data.state);
-      form.reset();
-
-      if (statusReq) {
-        setAddress(searchCep.data);
-      }
+      setTimeout(async () => {
+        const searchCep = await axios.get(
+          `${apiBrasil}/${form.getValues("cepValue")}`,
+        );
+        const statusReq = searchCep.status === 200;
+        setLoadedDatas(statusReq);
+        console.log(statusReq);
+        console.log(searchCep.data.state);
+        form.reset();
+        if (statusReq) {
+          setAddress(searchCep.data);
+        }
+      }, 1700);
     } catch (error) {
       console.log(error);
     }
   };
-
-  // useEffect(() => {
-  //   // setTheme("dark");
-  // }, [setTheme]);
+  const cleanReq = async () => {
+    try {
+      return () => {
+        getCep();
+        console.log("testValueType");
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    return () => {
+      getCep();
+    };
+  }, []);
 
   return (
     <main className="box-content flex flex-col gap-6 lg:w-[600px] h-[100vh] max-sm:justify-center justify-center max-sm:items-center items-center max-sm:w-full lg:max-w-[70%]">
@@ -115,6 +129,7 @@ const FinderPage = () => {
                   </FormItem>
                 )}
               />
+              {/* <Button type="reset">remove</Button> */}
               <Button
                 className={`cursor-pointer dark:bg-stone-900 p-3 h-full border-2 w-auto ${form.watch("cepValue").length === 8 ? "border-2 border-[#00ff00]" : "none"}`}
                 type="submit"
@@ -161,64 +176,66 @@ const FinderPage = () => {
           {loadedDatas ? <Separator /> : null}
           <CardContent className="w-full p-0">
             {loadedDatas || form.watch("cepValue").length > 0 ? (
-              <section className="flex flex-col items-center justify-start p-4 gap-4 bg-stone-800 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
+              <section className="flex flex-col justify-center items-center p-4 gap-4 bg-stone-800 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
                 <motion.div initial={{ scale: -0.5 }} animate={{ scale: 1 }}>
                   {form.watch("cepValue").length <= 7 ||
                     (!loadedDatas && (
                       <Loader2
-                        className="w-[100px] animate-spin text-muted-foreground"
+                        className="relative w-[100px] animate-spin text-muted-foreground"
                         size={100}
                       />
                     ))}
-                  <ul>
-                    <li className="pb-4">
-                      {!loadedDatas ? (
-                        <Skeleton className="h-[20px] w-full" />
-                      ) : (
+                  {loadedDatas && (
+                    <ul className=" flex flex-col items-start justify-start w-full">
+                      <li className="pb-4 w-[100%]">
+                        {!loadedDatas ? (
+                          <Skeleton className="h-[20px] w-full" />
+                        ) : (
+                          <span className="flex items-center gap-2">
+                            <Locate />
+                            <p>
+                              <small>Bairro</small>
+                            </p>
+                          </span>
+                        )}
+                        {giveAddress?.neighborhood}
+                      </li>
+                      <li className="pb-5">
                         <span className="flex items-center gap-2">
-                          <Locate />
+                          <Signpost />
                           <p>
-                            <small>Bairro</small>
+                            <small>Rua/Avenida</small>
                           </p>
                         </span>
-                      )}
-                      {giveAddress?.neighborhood}
-                    </li>
-                    <li className="pb-5">
-                      <span className="flex items-center gap-2">
-                        <Signpost />
-                        <p>
-                          <small>Rua/Avenida</small>
-                        </p>
-                      </span>
-                      <div className="text-3xl">
-                        {!loadedDatas ? (
-                          <Skeleton className="h-[40px] bg-stone-600 w-full" />
-                        ) : (
-                          <p>{giveAddress?.street}</p>
-                        )}
-                      </div>
-                    </li>
-                    <li className="pb-3">
-                      <span className="flex items-center gap-2">
-                        <BookMarked />
-                        <p>
-                          <small>Cep</small>
-                        </p>
-                      </span>
-                      <div>
-                        {!loadedDatas ? (
-                          <Skeleton className="h-[40px] bg-stone-600 w-full" />
-                        ) : (
+                        <div className="text-3xl">
+                          {!loadedDatas ? (
+                            <Skeleton className="h-[40px] bg-stone-600 w-full" />
+                          ) : (
+                            <p>{giveAddress?.street}</p>
+                          )}
+                        </div>
+                      </li>
+                      <li className="pb-3">
+                        <span className="flex items-center gap-2">
+                          <BookMarked />
                           <p>
-                            <small className="text-stone-500">
-                              {giveAddress?.cep}
-                            </small>
+                            <small>Cep</small>
                           </p>
-                        )}
-                      </div>
-                    </li>
-                  </ul>
+                        </span>
+                        <div>
+                          {!loadedDatas ? (
+                            <Skeleton className="h-[40px] bg-stone-600 w-full" />
+                          ) : (
+                            <p>
+                              <small className="text-stone-500">
+                                {giveAddress?.cep}
+                              </small>
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    </ul>
+                  )}
                 </motion.div>
               </section>
             ) : null}
