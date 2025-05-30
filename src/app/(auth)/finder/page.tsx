@@ -191,13 +191,13 @@ const FinderPage = () => {
                           <small>Rua/Avenida</small>
                         </p>
                       </span>
-                      <p className="text-3xl">
+                      <div className="text-3xl">
                         {!loadedDatas ? (
                           <Skeleton className="h-[40px] bg-stone-600 w-full" />
                         ) : (
-                          <b>{giveAddress?.street}</b>
+                          <p>{giveAddress?.street}</p>
                         )}
-                      </p>
+                      </div>
                     </li>
                     <li className="pb-3">
                       <span className="flex items-center gap-2">
@@ -206,15 +206,17 @@ const FinderPage = () => {
                           <small>Cep</small>
                         </p>
                       </span>
-                      <p>
+                      <div>
                         {!loadedDatas ? (
                           <Skeleton className="h-[40px] bg-stone-600 w-full" />
                         ) : (
-                          <small className="text-stone-500">
-                            {giveAddress?.cep}
-                          </small>
+                          <p>
+                            <small className="text-stone-500">
+                              {giveAddress?.cep}
+                            </small>
+                          </p>
                         )}
-                      </p>
+                      </div>
                     </li>
                   </ul>
                 </motion.div>

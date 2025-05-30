@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning={true}>
       <body
         className={`${roboto.variable} ${inter.variable}
 			box-border bg-stone-900 text-gray-100 antialiased background`}
