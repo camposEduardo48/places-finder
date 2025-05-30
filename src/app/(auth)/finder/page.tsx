@@ -1,105 +1,101 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+// import "dotenv/config"
+import { Button } from "@/components/ui/button"
+// console.log(Button)
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+//console.log(Card, CardContent, CardFooter, CardHeader)
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import axios from "axios";
-import dayjs from "dayjs";
+} from "@/components/ui/form"
+// console.log(Form, FormControl, FormField, FormItem, FormMessage)
+import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
+import { useForm } from "react-hook-form"
+import { useEffect, useState } from "react"
+// import { motion } from "framer-motion"
+// console.log(Input, Skeleton, useForm, useEffect, useState, motion)
+import axios from "axios"
+// import dayjs from "dayjs"
+// console.log(axios, dayjs)
 import {
   BookMarked,
   Clock,
   Loader2,
-  Locate,
   Signpost,
-  MapPin,
+  MapPin as Locate,
   Search,
-} from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+} from "lucide-react"
+// console.log(BookMarked, Clock, Loader2, Locate, Signpost, MapPin, Search)
+import { Separator } from "@/components/ui/separator"
+// console.log(Separator)
 // import { useTheme } from "next-themes";
 
-const apiBrasil = process.env.NEXT_PUBLIC_BRASIL_API;
+// const apiBrasil = process.env.NEXT_PUBLIC_BRASIL_API
 // const apiBrasilClima = process.env.NEXT_PUBLIC_BRASIL_API_CLIMA;
-const actualDate = dayjs(new Date()).format("HH:mm - DD/MM/YYYY");
+// const actualDate = dayjs(new Date()).format("HH:mm - DD/MM/YYYY")
 
 interface TypeApiBrasil {
-  cep: string;
-  state: string;
-  city: string;
-  neighborhood: string;
-  street: string;
+  cep: string
+  state: string
+  city: string
+  neighborhood: string
+  street: string
 }
 
 const FinderPage = () => {
   // const { setTheme } = useTheme();
-  const [isLoading, setIsLoading] = useState(false);
-  const [giveAddress, setAddress] = useState<TypeApiBrasil>();
-  const [loadedDatas, setLoadedDatas] = useState<boolean>();
-
+  const [isLoading, setIsLoading] = useState(false)
+  const [giveAddress, setAddress] = useState<TypeApiBrasil>()
+  const [loadedDatas, setLoadedDatas] = useState<boolean>()
+  console.log("Ícones:", { Locate, Signpost, BookMarked, Loader2 })
   const form = useForm({
     defaultValues: {
       cepValue: "",
     },
-  });
+  })
 
   const getCep = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     try {
       setTimeout(async () => {
         const searchCep = await axios.get(
-          `${apiBrasil}/${form.getValues("cepValue")}`,
-        );
-        const statusReq = searchCep.status === 200;
-        setLoadedDatas(statusReq);
-        console.log(statusReq);
-        console.log(searchCep.data.state);
-        form.reset();
+          `${"https://brasilapi.com.br/api/cep/v1"}/${form.getValues("cepValue")}`,
+        )
+        const statusReq = searchCep.status === 200
+        setLoadedDatas(statusReq)
+        console.log(statusReq)
+        console.log(searchCep.data.state)
+        form.reset()
         if (statusReq) {
-          setAddress(searchCep.data);
+          setAddress(searchCep.data)
         }
-      }, 1700);
+      }, 1700)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
-  const cleanReq = async () => {
-    try {
-      return () => {
-        getCep();
-        console.log("testValueType");
-      };
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  }
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    return () => {
-      getCep();
-    };
-  }, []);
+    return () => {}
+  }, [])
 
   return (
     <main className="box-content flex flex-col gap-6 lg:w-[600px] h-[100vh] max-sm:justify-center justify-center max-sm:items-center items-center max-sm:w-full lg:max-w-[70%]">
       <Card className="h-auto min-w-[350px] max-w-[600px] w-[96%] text-gray-200 bg-stone-800 shadow-none">
         <CardHeader className="flex items-center gap-3">
-          <MapPin size={30} color="gray" />
+          {/* <MapPin size={30} color="gray" /> */}
           <h2 className="text-2xl"> Localizador 48</h2>
+          <p>
+            <small>
+              erro build pode estar relacionado a importação de arquivos
+              incorreta ou com a condição ternaria
+            </small>
+          </p>
         </CardHeader>
         <Separator color="black" />
         <CardContent>
@@ -168,7 +164,7 @@ const FinderPage = () => {
                 <p className="text-lg">Resultado da pesquisa</p>
                 <p className="flex gap-2 items-center text-stone-500">
                   <Clock size={16} />
-                  <small>{actualDate}</small>
+                  <small>{"actualDate"}</small>
                 </p>
               </>
             )}
@@ -177,73 +173,73 @@ const FinderPage = () => {
           <CardContent className="w-full p-0">
             {loadedDatas || form.watch("cepValue").length > 0 ? (
               <section className="flex flex-col justify-center items-center p-4 gap-4 bg-stone-800 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
-                <motion.div initial={{ scale: -0.5 }} animate={{ scale: 1 }}>
-                  {form.watch("cepValue").length <= 7 ||
-                    (!loadedDatas && (
-                      <Loader2
-                        className="relative w-[100px] animate-spin text-muted-foreground"
-                        size={100}
-                      />
-                    ))}
-                  {loadedDatas && (
-                    <ul className=" flex flex-col items-start justify-start w-full">
-                      <li className="pb-4 w-[100%]">
+                {/* <motion.div initial={{ scale: -0.5 }} animate={{ scale: 1 }}> */}
+                {form.watch("cepValue").length <= 7 ||
+                  (!loadedDatas && (
+                    <Loader2
+                      className="relative w-[100px] animate-spin text-muted-foreground"
+                      size={100}
+                    />
+                  ))}
+                {loadedDatas && (
+                  <ul className=" flex flex-col items-start justify-start w-full">
+                    <li className="pb-4 w-[100%]">
+                      {!loadedDatas ? (
+                        <Skeleton className="h-[20px] w-full" />
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <Locate />
+                          <p>
+                            <small>Bairro</small>
+                          </p>
+                        </span>
+                      )}
+                      {giveAddress?.neighborhood}
+                    </li>
+                    <li className="pb-5">
+                      <span className="flex items-center gap-2">
+                        <Signpost />
+                        <p>
+                          <small>Rua/Avenida</small>
+                        </p>
+                      </span>
+                      <div className="text-3xl">
                         {!loadedDatas ? (
-                          <Skeleton className="h-[20px] w-full" />
+                          <Skeleton className="h-[40px] bg-stone-600 w-full" />
                         ) : (
-                          <span className="flex items-center gap-2">
-                            <Locate />
-                            <p>
-                              <small>Bairro</small>
-                            </p>
-                          </span>
+                          <p>{giveAddress?.street}</p>
                         )}
-                        {giveAddress?.neighborhood}
-                      </li>
-                      <li className="pb-5">
-                        <span className="flex items-center gap-2">
-                          <Signpost />
+                      </div>
+                    </li>
+                    <li className="pb-3">
+                      <span className="flex items-center gap-2">
+                        <BookMarked />
+                        <p>
+                          <small>Cep</small>
+                        </p>
+                      </span>
+                      <div>
+                        {!loadedDatas ? (
+                          <Skeleton className="h-[40px] bg-stone-600 w-full" />
+                        ) : (
                           <p>
-                            <small>Rua/Avenida</small>
+                            <small className="text-stone-500">
+                              {giveAddress?.cep}
+                            </small>
                           </p>
-                        </span>
-                        <div className="text-3xl">
-                          {!loadedDatas ? (
-                            <Skeleton className="h-[40px] bg-stone-600 w-full" />
-                          ) : (
-                            <p>{giveAddress?.street}</p>
-                          )}
-                        </div>
-                      </li>
-                      <li className="pb-3">
-                        <span className="flex items-center gap-2">
-                          <BookMarked />
-                          <p>
-                            <small>Cep</small>
-                          </p>
-                        </span>
-                        <div>
-                          {!loadedDatas ? (
-                            <Skeleton className="h-[40px] bg-stone-600 w-full" />
-                          ) : (
-                            <p>
-                              <small className="text-stone-500">
-                                {giveAddress?.cep}
-                              </small>
-                            </p>
-                          )}
-                        </div>
-                      </li>
-                    </ul>
-                  )}
-                </motion.div>
+                        )}
+                      </div>
+                    </li>
+                  </ul>
+                )}
+                {/* </motion.div> */}
               </section>
             ) : null}
           </CardContent>
         </Card>
       )}
     </main>
-  );
-};
+  )
+}
 
-export default FinderPage;
+export default FinderPage
