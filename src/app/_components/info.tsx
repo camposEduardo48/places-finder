@@ -2,7 +2,7 @@
 import { InfoContext } from "@/context/textContext"
 import { useState, type ReactNode } from "react"
 
-const InfoProvider = ({ children }: { children: ReactNode }) => {
+export const InfoProvider = ({ children }: { children: ReactNode }) => {
   const [count, setCount] = useState(0)
   const increment = () => setCount((prev) => prev + 1)
 
@@ -12,5 +12,3 @@ const InfoProvider = ({ children }: { children: ReactNode }) => {
     </InfoContext.Provider>
   )
 }
-
-export default InfoProvider

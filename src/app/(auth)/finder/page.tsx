@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useForm } from "react-hook-form"
-import { useContext, useEffect, useState } from "react"
+import { useState } from "react"
 // import { motion } from "framer-motion"
 // console.log(Input, Skeleton, useForm, useEffect, useState, motion)
 import axios from "axios"
@@ -32,8 +32,8 @@ import {
 } from "lucide-react"
 // console.log(BookMarked, Clock, Loader2, Locate, Signpost, MapPin, Search)
 import { Separator } from "@/components/ui/separator"
-import Informations from "@/app/_components/info"
-import { InfoContext, useInfo } from "@/context/textContext"
+import { InfoProvider } from "@/app/_components/info"
+import { useInfo } from "@/context/textContext"
 // console.log(Separator)
 // import { useTheme } from "next-themes";
 // const apiBrasil = process.env.NEXT_PUBLIC_BRASIL_API
@@ -51,9 +51,8 @@ interface TypeApiBrasil {
 const FinderPage = () => {
   // const { setTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false)
-  const [giveAddress, setAddress] = useState<TypeApiBrasil>()
-  const [loadedDatas, setLoadedDatas] = useState<boolean>()
-  console.log("Ícones:", { Locate, Signpost, BookMarked, Loader2 })
+  const [giveAddress, setAddress] = useState<TypeApiBrasil | null>(null)
+  const [loadedDatas, setLoadedDatas] = useState<boolean>(false)
   const form = useForm({
     defaultValues: {
       cepValue: "",
@@ -69,8 +68,6 @@ const FinderPage = () => {
         )
         const statusReq = searchCep.status === 200
         setLoadedDatas(statusReq)
-        console.log(statusReq)
-        console.log(searchCep.data.state)
         form.reset()
         if (statusReq) {
           setAddress(searchCep.data)
@@ -100,7 +97,7 @@ const FinderPage = () => {
               incorreta ou com a condição ternaria
             </small>
           </p>
-          <Informations>
+          <InfoProvider>
             Results: {count}
             <Button
               className="cursor-pointer"
@@ -109,17 +106,17 @@ const FinderPage = () => {
             >
               Increment
             </Button>
-          </Informations>
+          </InfoProvider>
         </CardHeader>
         <Separator color="black" />
         <CardContent>
           <Form {...form}>
-            <small>Digite o cep</small>
             <form
               // className="flex max-sm:flex-col border-2 border-pink-500 justify-between w-full"
               className="flex gap-3 justify-start h-auto w-full items-center"
               onSubmit={form.handleSubmit(getCep)}
             >
+              <small>Digite o cep</small>
               <FormField
                 control={form.control}
                 name="cepValue"
