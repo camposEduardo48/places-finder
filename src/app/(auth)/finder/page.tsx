@@ -32,8 +32,6 @@ import {
 } from "lucide-react"
 // console.log(BookMarked, Clock, Loader2, Locate, Signpost, MapPin, Search)
 import { Separator } from "@/components/ui/separator"
-import { InfoProvider } from "@/app/_components/info"
-import { useInfo } from "@/context/textContext"
 // console.log(Separator)
 // import { useTheme } from "next-themes";
 // const apiBrasil = process.env.NEXT_PUBLIC_BRASIL_API
@@ -78,9 +76,8 @@ const FinderPage = () => {
     }
   }
 
-  const { count, increment } = useInfo()
+  // const { count, increment } = useInfo()
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   // useEffect(() => {
   //   return () => {}
   // }, [])
@@ -97,16 +94,10 @@ const FinderPage = () => {
               incorreta ou com a condição ternaria
             </small>
           </p>
-          <InfoProvider>
-            Results: {count}
-            <Button
-              className="cursor-pointer"
-              type="button"
-              onClick={increment}
-            >
-              Increment
-            </Button>
-          </InfoProvider>
+          {/* Results: {count}
+          <Button className="cursor-pointer" type="button" onClick={increment}>
+            Increment
+          </Button> */}
         </CardHeader>
         <Separator color="black" />
         <CardContent>
