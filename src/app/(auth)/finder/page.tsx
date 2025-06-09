@@ -83,7 +83,7 @@ const FinderPage = () => {
   // }, [])
 
   return (
-    <main className="box-content flex flex-col gap-6 lg:w-[600px] h-[100vh] max-sm:justify-center justify-center max-sm:items-center items-center max-sm:w-full lg:max-w-[70%]">
+    <main className="box-content flex flex-col gap-4 lg:w-[600px] h-[100vh] max-sm:justify-center justify-center max-sm:items-center items-center max-sm:w-full lg:max-w-[70%]">
       <Card className="h-auto min-w-[350px] max-w-[600px] w-[96%] text-gray-200 bg-stone-800 shadow-none">
         <CardHeader className="flex items-center gap-3">
           <MapPin size={34} className="text-stone-500" />
@@ -153,7 +153,7 @@ const FinderPage = () => {
         </CardFooter>
       </Card>
       {isLoading && (
-        <Card className="h-auto min-w-[350px] max-w-[600px] w-[96%] text-gray-200 bg-stone-800 shadow-none">
+        <Card className="h-auto min-w-[300px] max-w-[600px] w-[96%] text-gray-200 bg-stone-800 shadow-none">
           <CardHeader className="w-full text-white">
             {loadedDatas && (
               <>
@@ -168,7 +168,7 @@ const FinderPage = () => {
           {loadedDatas ? <Separator /> : null}
           <CardContent className="w-full p-0">
             {loadedDatas || form.watch("cepValue").length > 0 ? (
-              <section className="flex flex-col justify-center items-center p-4 gap-4 bg-stone-800 min-h-[300px] h-auto max-h-[500px] overflow-y-auto w-full rounded-xl text-xl">
+              <section className="flex flex-col justify-center items-center p-0 gap-4 bg-stone-800 min-h-[250px] h-auto max-h-[450px] overflow-y-auto w-full rounded-xl text-xl">
                 <motion.div initial={{ scale: -0.5 }} animate={{ scale: 1 }}>
                   {form.watch("cepValue").length <= 7 ||
                     (!loadedDatas && (
